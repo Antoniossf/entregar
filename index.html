@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agência de Tarefas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        input, button {
+            margin-bottom: 10px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Agência de Tarefas</h1>
+
+    <label for="task">Tarefa:</label>
+    <input type="text" id="task" placeholder="Digite a tarefa">
+
+    <label for="priority">Prioridade:</label>
+    <input type="text" id="priority" placeholder="Digite a prioridade">
+
+    <label for="dueDate">Data de Vencimento:</label>
+    <input type="text" id="dueDate" placeholder="Digite a data de vencimento">
+
+    <label for="status">Status:</label>
+    <input type="text" id="status" placeholder="Digite o status">
+
+    <label for="notes">Notas:</label>
+    <input type="text" id="notes" placeholder="Digite as notas">
+
+    <button onclick="adicionarTarefa()">Adicionar Tarefa</button>
+
+    <h2>Lista de Tarefas</h2>
+    <ul id="listaTarefas"></ul>
+
+    <script>
+        function adicionarTarefa() {
+            var tarefa = document.getElementById('task').value;
+            var prioridade = document.getElementById('priority').value;
+            var dataVencimento = document.getElementById('dueDate').value;
+            var estado = document.getElementById('status').value;
+            var observacoes = document.getElementById('notes').value;
+
+            if (tarefa.trim() === '') {
+                alert('Por favor, digite uma tarefa.');
+                return;
+            }
+
+            var objetoTarefa = {
+                tarefa: tarefa,
+                prioridade: prioridade,
+                dataVencimento: dataVencimento,
+                estado: estado,
+                observacoes: observacoes
+            };
+
+            // Recupera a lista de tarefas do localStorage
+            var tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
+
+            // Adiciona a nova tarefa à lista
+            tarefas.push(objetoTarefa);
+
+            // Atualiza o localStorage com a nova lista de tarefas
+            localStorage.setItem('tarefas', JSON.stringify(tarefas));
+
+            // Limpa os campos de entrada
+            limparCampos();
+
+            // Atualiza a lista de tarefas exibida na página
+            exibirTarefas();
+        }
+
+        function exibirTarefas() {
+            var listaTarefas = document.getElementById('listaTarefas');
+            listaTarefas.innerHTML = '';
+
+            // Recupera a lista de tarefas do localStorage
+            var tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
+
+            // Exibe cada tarefa na lista
+            tarefas.forEach(function(tarefa, indice) {
+                var itemLista = document.createElement('li');
+                itemLista.innerHTML = `
+                    <strong>${tarefa.tarefa}</strong> -
+                    Prioridade: ${tarefa.prioridade}, 
+                    Vencimento: ${tarefa.dataVencimento}, 
+                    Estado: ${tarefa.estado}, 
+                    Observações: ${tarefa.observacoes} 
+                    <button onclick="excluirTarefa(${indice})">Excluir</button>
+                `;
+                listaTarefas.appendChild(itemLista);
+            });
+        }
+
+        function excluirTarefa(indice) {
+            // Recupera a lista de tarefas do localStorage
+            var tarefas = JSON.parse(localStorage.getItem('tarefas')) || [];
+
+            // Remove a tarefa com o índice especificado
+            tarefas.splice(indice, 1);
+
+            // Atualiza o localStorage com a nova lista de tarefas
+            localStorage.setItem('tarefas', JSON.stringify(tarefas));
+
+            // Atualiza a lista de tarefas exibida na página
+            exibirTarefas();
+        }
+
+        function limparCampos() {
+            document.getElementById('task').value = '';
+            document.getElementById('priority').value = '';
+            document.getElementById('dueDate').value = '';
+            document.getElementById('status').value = '';
+            document.getElementById('notes').value = '';
+        }
+
+        // Exibe as tarefas ao carregar a página
+        exibirTarefas();
+    </script>
+
+</body>
+</html>
